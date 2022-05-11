@@ -30,59 +30,78 @@ export default function RegisterForm() {
       setMsgName("Error, nombre no valido");
     } else {
       setMsgName("");
-      if (!namePattern.test(data.lastName)) {
-        setMsgLastName("Error, Apellido no valido");
-      } else {
-        setMsgLastName("");
-        const idIdentifier = data.idIdentifier;
-        if(idIdentifier=="0"){
-          setMsgIdIdentifier("Error, Seleccione un identificador");
+      const name = data.name;
+      if (name.length > 50){
+        setMsgName("Error, El nombre debe tener 50 caracteres como maximo");
+      }else{
+        setMsgName("");
+        const lastName = data.lastName;
+        if(lastName.length > 50){
+          setMsgLastName("Error, El apellido debe tener 50 caracteres como maximo");
         }else{
-          setMsgIdIdentifier("");
-          const phoneNumber = data.phoneNumber;
-          if (phoneNumber.length < 10 || phoneNumber.length > 10) {
-            setMsgPhoneNumber("Error, el telefono debe tener 10 caracteres");
+          setMsgLastName("");  
+          if (!namePattern.test(data.lastName)) {
+            setMsgLastName("Error, Apellido no valido");
           } else {
-            setMsgPhoneNumber("");
-            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-            if (!emailPattern.test(data.email)) {
-              setMsgEmail("Error, email no valido");
-            } else {
-              setMsgEmail("");
-              var passwordValidator = require("password-validator");
-              var schema = new passwordValidator();
-              schema
-                .is()
-                .min(8)
-                .is()
-                .max(100)
-                .has()
-                .uppercase()
-                .has()
-                .lowercase()
-                .has()
-                .digits(1)
-                .has()
-                .not()
-                .spaces()
-                .has(["(?=.[!.@#$%^&*])"])
-                .is()
-                .not()
-                .oneOf(["Passw0rd", "Password123"]);
-              //console.log(schema.validate('asassassA11'));
-              if (!schema.validate(data.password)) {
-                setMsgPassword(
-                  "La contraseña debe tener 8 caracteres, minimo un numero, una mayuscula, una minuscula y un simbolo"
-                );
+            setMsgLastName("");
+            const idIdentifier = data.idIdentifier;
+            if(idIdentifier=="0"){
+              setMsgIdIdentifier("Error, Seleccione un identificador");
+            }else{
+              setMsgIdIdentifier("");
+              const phoneNumber = data.phoneNumber;
+              if (phoneNumber.length < 10 || phoneNumber.length > 10) {
+                setMsgPhoneNumber("Error, el telefono debe tener 10 caracteres");
               } else {
-                setMsgPassword("");
-                axios.post(url, data).then((response) => {
-                  if (response.data.error) {
-                    setError1(response.data.response);
-                  } else {
-                    window.location.assign("/confirm");
+                setMsgPhoneNumber("");
+                var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                if (!emailPattern.test(data.email)) {
+                  setMsgEmail("Error, email no valido");
+                } 
+                  else {
+                  setMsgEmail("");
+                  const email = data.email;
+                  if (email.length > 60){
+                    setMsgEmail("Error, El correo debe tener 60 caracteres como maximo");
+                  }else{
+                    setMsgEmail("");
+                    var passwordValidator = require("password-validator");
+                    var schema = new passwordValidator();
+                    schema
+                      .is()
+                      .min(8)
+                      .is()
+                      .max(50)
+                      .has()
+                      .uppercase()
+                      .has()
+                      .lowercase()
+                      .has()
+                      .digits(1)
+                      .has()
+                      .not()
+                      .spaces()
+                      .has(["(?=.[!.@#$%^&*])"])
+                      .is()
+                      .not()
+                      .oneOf(["Passw0rd", "Password123"]);
+                    //console.log(schema.validate('asassassA11'));
+                    if (!schema.validate(data.password)) {
+                      setMsgPassword(
+                        "La contraseña debe tener 8 caracteres, minimo un numero, una mayuscula, una minuscula y un simbolo"
+                      );
+                    } else {
+                      setMsgPassword("");
+                      axios.post(url, data).then((response) => {
+                        if (response.data.error) {
+                          setError1(response.data.response);
+                        } else {
+                          window.location.assign("/confirm");
+                        }
+                      });
+                    }
                   }
-                });
+                }
               }
             }
           }
